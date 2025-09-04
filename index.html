@@ -559,6 +559,74 @@
 
       .btn-branch-open { padding: 6px 10px; font-size: 0.85rem; }
       .btn-branch-copy { padding: 6px 10px; font-size: 0.85rem; }
+
+      /* Navigation pills: make top menu look like a modern pill menu instead of plain links */
+      .nav-tabs {
+        border-bottom: none;           /* remove heavy line */
+        padding: 6px 8px;              /* breathing room */
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+      }
+      .nav-tabs .nav-item { margin: 0; }
+      .nav-tabs .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(0,0,0,0.03);  /* subtle neutral background */
+        color: #0b3d91;                /* primary accent for light mode */
+        border: 1px solid transparent;
+        transition: background .12s ease, transform .08s ease, box-shadow .12s ease;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .nav-tabs .nav-link:hover {
+        background: rgba(13,110,253,0.06);
+        transform: translateY(-1px);
+        text-decoration: none;
+      }
+      .nav-tabs .nav-link.active {
+        background: #ffffff;
+        color: #0b3d91;
+        box-shadow: 0 8px 20px rgba(3,10,34,0.06);
+        transform: none;
+      }
+      /* Slightly different visual for the currently focused/keyboard-selected tab */
+      .nav-tabs .nav-link:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
+      }
+
+      /* Responsive: allow horizontal scroll on very small screens but keep pill spacing */
+      @media (max-width: 640px) {
+        .nav-tabs {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          gap: 6px;
+          padding-bottom: 6px;
+        }
+        .nav-tabs .nav-link { padding: 6px 10px; font-size: 14px; }
+      }
+
+      /* Dark theme overrides for nav pills */
+      body.dark-theme .nav-tabs .nav-link {
+        background: rgba(255,255,255,0.03);
+        color: var(--muted, #bcd7ef);
+      }
+      body.dark-theme .nav-tabs .nav-link:hover {
+        background: rgba(255,255,255,0.06);
+      }
+      body.dark-theme .nav-tabs .nav-link.active {
+        background: var(--accent-strong, #7ec8ff);
+        color: #021022;
+        box-shadow: 0 8px 24px rgba(2,16,34,0.5);
+      }
+
+      /* Small visual polish: align tabs vertically with header and ensure spacing */
+      .nav-scroll { display: flex; align-items: center; gap: 8px; padding-left: 4px; }
+
     </style>
     <!-- Global site tag (gtag.js) - Google Analytics -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-N4FDWQWNE4"></script>
