@@ -19,6 +19,12 @@ function showQuickNav(show) {
   else quick.classList.remove('label-inline');
 }
 
+// reset Module: dropdown to default
+function resetQuickNav() {
+    const quickNav = document.getElementById('quick-nav');
+    if (quickNav) quickNav.value = ""; // reset to "Quick Jump"
+  }
+
 // show/hide header search (home-only)
 function showHeaderSearch(show) {
   const headerSearch = document.getElementById('header-search');
@@ -93,6 +99,9 @@ function headerSearch(term) {
     // show quick-nav & version when content/branch view is visible
     showQuickNav(isContentVisible);
     setVersionVisibility(isContentVisible);
+
+    //reset dropdown each time UI state changes
+    resetQuickNav();
   }
 
   // initial run
@@ -108,6 +117,7 @@ function headerSearch(term) {
         showHeaderSearch(false);
         setVersionVisibility(true);
       }, 150);
+        resetQuickNav();
     }
   });
 
@@ -118,6 +128,7 @@ function headerSearch(term) {
       showQuickNav(true);
       showHeaderSearch(false);
       setVersionVisibility(true);
+      resetQuickNav();
     });
   }
 
