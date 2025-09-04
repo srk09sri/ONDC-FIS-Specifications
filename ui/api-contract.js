@@ -228,36 +228,71 @@ function populateVersionDropdown(branches) {
 }
 
 async function renderBranchesTable() {
-  const response = await fetchBranches()
+  const response = await fetchBranches();
 
   const filteredBranches = BRANCHES.filter(item1 =>
     response.some(item2 => item1.code === item2.name)
   );
 
-   const statusColors = {
+  const statusColors = {
     RELEASED: "#28a745",
     DRAFT: "#ffc107",
     DEPRECATED: "#dc3545",
     TO_BE_DEPRECATED: "#ff851b"
   };
 
-  let tableBody = ''
+  const container = document.getElementById("branchesList");
+  if (!container) return;
+  let html = '';
 
   filteredBranches.forEach(branch => {
-    tableBody += `
-    <tr>
-    <td>${branch.name}</td>
-    <td>${branch.short_desc}</td>
-    <td>
-      <span class="badge" style="background-color: ${statusColors[branch.status]};"> ${branch.status}</span>
-    </td>
-    <td class="branchLink" onClick="resolveHomePage('${branch.code}')">${branch.code}</td>
-    </tr>
-    `
-  })
+    const borderColor = statusColors[branch.status] || "#6c757d";
+    const statusClass = `status-${branch.status || ''}`.replace(/\s+/g, '_');
 
-  document.getElementById("branchesTableBody").innerHTML = tableBody
-  populateVersionDropdown(filteredBranches)
+    // Display full branch.code (no shortening)
+    html += `
+      <div class="branch-card" style="border-left-color: ${borderColor};">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="flex:1">
+            <h5 class="branch-title">${branch.name}</h5>
+            <p class="branch-desc">${branch.short_desc || ''}</p>
+          </div>
+          <div class="branch-meta">
+            <div class="status-badge ${statusClass}">${branch.status}</div>
+            <div class="branch-code mt-2" title="${branch.code}">
+              <a href="#" class="branchLink" onclick="resolveHomePage('${branch.code}');return false;">${branch.code}</a>
+            </div>
+          </div>
+        </div>
+        <div class="branch-actions">
+          <button class="btn btn-sm btn-outline-secondary btn-branch-copy" onclick="copyBranch('${branch.code}', this)">Copy</button>
+          <button class="btn btn-sm btn-primary btn-branch-open" onclick="resolveHomePage('${branch.code}')">Open</button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  populateVersionDropdown(filteredBranches);
+}
+
+function copyBranch(code, btn) {
+  if (!navigator.clipboard) {
+    const ta = document.createElement('textarea');
+    ta.value = code;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  } else {
+    navigator.clipboard.writeText(code).catch(()=>{});
+  }
+  if (btn) {
+    const orig = btn.innerText;
+    btn.innerText = 'Copied';
+    btn.disabled = true;
+    setTimeout(()=>{ btn.innerText = orig; btn.disabled = false; }, 1400);
+  }
 }
 
 function init() {

@@ -66,16 +66,16 @@ function quickNavigate(target) {
   }, 150);
 }
 
-// header search — only active on home page; filters branch table rows
+// header search — filters branch cards on the home page
 function headerSearch(term) {
   term = (term || '').trim().toLowerCase();
   const home = document.getElementById('home');
   const isHomeVisible = home && window.getComputedStyle(home).display !== 'none';
   if (!isHomeVisible) return;
-  const rows = document.querySelectorAll('#branchesTableBody tr');
-  rows.forEach(r => {
-    const txt = r.innerText.toLowerCase();
-    r.style.display = txt.includes(term) ? '' : 'none';
+  const cards = document.querySelectorAll('#branchesList .branch-card');
+  cards.forEach(card => {
+    const txt = card.innerText.toLowerCase();
+    card.style.display = txt.includes(term) ? '' : 'none';
   });
 }
 

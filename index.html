@@ -498,6 +498,67 @@
     margin-bottom: 0;
     white-space: nowrap;
   }
+
+      /* Branch card list (home) */
+      .branch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .branch-card {
+        background: linear-gradient(180deg, #ffffff, #fbfbff);
+        border-radius: 10px;
+        padding: 14px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        border-left: 6px solid transparent;
+        transition: transform .12s ease, box-shadow .12s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .branch-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+      }
+      .branch-title { margin: 0; font-size: 1rem; font-weight: 600; color: #0b3d91; }
+      .branch-desc { 
+        margin: 6px 0 0; 
+        color: #374151; 
+        font-size: 0.82rem;      /* reduced size for cleaner cards */
+        min-height: 36px;        /* slightly smaller */
+        line-height: 1.2;
+      }
+      .branch-code {
+        font-family: monospace; 
+        color: #0b5ed7; 
+        font-weight: 600; 
+        font-size: 0.78rem;      /* smaller, less dominant */
+        max-width: 120px;        /* constrain width */
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+      }
+      .branch-actions {
+        display:flex; 
+        gap:8px; 
+        justify-content:flex-end; 
+        margin-top:6px;
+        align-items:center;       /* vertically center buttons */
+      }
+      .status-badge { font-size: 0.75rem; padding: 6px 8px; border-radius: 999px; font-weight:600; }
+      .branch-code { font-family: monospace; color: #0b5ed7; font-weight:600; }
+      .branch-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:6px; }
+
+      .status-RELEASED { background: #e6f6ea; color: #198754; }
+      .status-DRAFT { background: #fff7e6; color: #d48806; }
+      .status-DEPRECATED { background: #ffe9e9; color: #c92a2a; }
+      .status-TO_BE_DEPRECATED { background: #fff3e0; color: #d97706; }
+
+      .btn-branch-open { padding: 6px 10px; font-size: 0.85rem; }
+      .btn-branch-copy { padding: 6px 10px; font-size: 0.85rem; }
     </style>
     <!-- Global site tag (gtag.js) - Google Analytics -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-N4FDWQWNE4"></script>
@@ -958,19 +1019,13 @@
       </div>
     </div>
     <div id="home" class="container-fluid">
-      <h3>Branches</h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Usecase </th>
-            <th scope="col">Description</th>
-            <th scope="col">Status</th>
-            <th scope="col">Branch name</th>
-          </tr>
-        </thead>
-        <tbody id="branchesTableBody">
-        </tbody>
-      </table>
+      <div class="d-flex align-items-center justify-content-between">
+        <h3 class="mb-2">Branches</h3>
+        <small class="text-muted">Browse usecases — open a branch to view details</small>
+      </div>
+
+      <!-- New: responsive branch card grid -->
+      <div id="branchesList" class="branch-grid" aria-live="polite"></div>
     </div>
 
       <div id="loader" class="loader-wrapper py-3">
