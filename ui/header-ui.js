@@ -5,18 +5,36 @@
 function setVersionVisibility(show) {
   const version = document.getElementById('version-dropdown');
   if (!version) return;
-  version.style.display = show ? 'inline-flex' : 'none';
-  if (show) version.classList.add('label-inline');
-  else version.classList.remove('label-inline');
+  // Use class-based transitions instead of abrupt style.display toggles
+  if (show) {
+    version.classList.add('label-inline', 'v-visible');
+    version.classList.remove('v-hidden', 'd-none');
+    version.style.display = 'inline-flex';
+    version.setAttribute('aria-hidden', 'false');
+  } else {
+    version.classList.remove('v-visible');
+    version.classList.add('v-hidden');
+    version.setAttribute('aria-hidden', 'true');
+    // keep layout stable for transition, hide after short delay
+    setTimeout(() => { if (version.classList.contains('v-hidden')) version.style.display = 'none'; }, 220);
+  }
 }
 
 // show/hide quick nav (Module)
 function showQuickNav(show) {
   const quick = document.getElementById('quick-nav-container');
   if (!quick) return;
-  quick.style.display = show ? 'inline-flex' : 'none';
-  if (show) quick.classList.add('label-inline');
-  else quick.classList.remove('label-inline');
+  if (show) {
+    quick.classList.add('label-inline', 'v-visible');
+    quick.classList.remove('v-hidden', 'd-none');
+    quick.style.display = 'inline-flex';
+    quick.setAttribute('aria-hidden', 'false');
+  } else {
+    quick.classList.remove('v-visible');
+    quick.classList.add('v-hidden');
+    quick.setAttribute('aria-hidden', 'true');
+    setTimeout(() => { if (quick.classList.contains('v-hidden')) quick.style.display = 'none'; }, 220);
+  }
 }
 
 // reset Module: dropdown to default
@@ -86,6 +104,7 @@ function headerSearch(term) {
     if (hasBranchParam) {
       showQuickNav(true);
       showHeaderSearch(false);
+      // Branch selector should be visible on branch/content view as well
       setVersionVisibility(true);
       return;
     }
@@ -96,9 +115,10 @@ function headerSearch(term) {
 
     // show search only on home
     showHeaderSearch(isHomeVisible);
-    // show quick-nav & version when content/branch view is visible
+    // show quick-nav when content/branch view is visible
     showQuickNav(isContentVisible);
-    setVersionVisibility(isContentVisible);
+    // show version-dropdown (Branch) on home OR content
+    setVersionVisibility(isHomeVisible || isContentVisible);
 
     //reset dropdown each time UI state changes
     resetQuickNav();
@@ -115,6 +135,7 @@ function headerSearch(term) {
       setTimeout(() => {
         showQuickNav(true);
         showHeaderSearch(false);
+        // show branch selector for branch/content view
         setVersionVisibility(true);
       }, 150);
         resetQuickNav();

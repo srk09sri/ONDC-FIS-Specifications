@@ -157,12 +157,15 @@ function upadteContract() {
 }
 
 function toggleHomePage() {
-  const veriosnDropdown = document.getElementById("version-dropdown")
   const content = document.getElementById("content")
   const home = document.getElementById("home")
   const loader = document.getElementById("loader")
 
-  veriosnDropdown.style.display = "none"
+  // show Branch selector on home, hide quick-nav
+  if (typeof setVersionVisibility === 'function') setVersionVisibility(true);
+  if (typeof showQuickNav === 'function') showQuickNav(false);
+  if (typeof showHeaderSearch === 'function') showHeaderSearch(true);
+
   content.style.display = "none"
   home.style.display = "block"
   loader.style.display = "none"
@@ -183,12 +186,15 @@ function resolveHomePage(branch, tab) {
   
   window.history.pushState({}, '', url);
 
-  const veriosnDropdown = document.getElementById("version-dropdown")
   const content = document.getElementById("content")
   const home = document.getElementById("home")
   const loader = document.getElementById("loader")
 
-  veriosnDropdown.style.display = "block"
+  // show Branch selector for branch view (restore original behavior)
+  if (typeof setVersionVisibility === 'function') setVersionVisibility(true);
+  if (typeof showQuickNav === 'function') showQuickNav(false);
+  if (typeof showHeaderSearch === 'function') showHeaderSearch(false);
+
   content.style.display = "none"
   home.style.display = "none"
   loader.style.display = "flex"
@@ -258,20 +264,23 @@ function init() {
   const urlParams = new URLSearchParams(window.location.search);
   const branchName = urlParams.get('branch');
 
-    const veriosnDropdown = document.getElementById("version-dropdown")
-    const content = document.getElementById("content")
-    const home = document.getElementById("home")
-    const loader = document.getElementById("loader")
+  const content = document.getElementById("content")
+  const home = document.getElementById("home")
+  const loader = document.getElementById("loader")
 
-    veriosnDropdown.style.display = "block"
-    content.style.display = "none"
-    home.style.display = "none"
-    loader.style.display = "flex"
-
-
+  // centralize header visibility: show Branch dropdown on home OR branch view
   if(!branchName) {
+    if (typeof setVersionVisibility === 'function') setVersionVisibility(true);
+    if (typeof showQuickNav === 'function') showQuickNav(false);
+    if (typeof showHeaderSearch === 'function') showHeaderSearch(true);
+
     toggleHomePage()
   } else {
+    // show Branch selector even when a branch is selected
+    if (typeof setVersionVisibility === 'function') setVersionVisibility(true);
+    if (typeof showQuickNav === 'function') showQuickNav(false);
+    if (typeof showHeaderSearch === 'function') showHeaderSearch(false);
+
     renderBranchesTable()
     readBuildFile(branchName)
   }

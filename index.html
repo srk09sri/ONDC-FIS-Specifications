@@ -18,6 +18,116 @@
         position: sticky;
         top: 0;
         z-index: 1000;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        background: linear-gradient(90deg, #0b3d91 0%, #0d6efd 60%);
+      }
+      .topbar-inner {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+        padding: 8px 12px;
+      }
+      .brand-title {
+        font-size: 1.05rem;
+        margin: 0 12px;
+        white-space: nowrap;
+        color: #fff;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+      #header-search {
+        flex: 1 1 360px;
+        max-width: 520px;
+        margin: 0 12px;
+        border-radius: 22px;
+        padding-left: 14px;
+        transition: box-shadow .18s ease;
+      }
+      #header-search:focus {
+        box-shadow: 0 4px 18px rgba(13,110,253,0.18);
+        outline: none;
+      }
+      .version-and-quick .form-select {
+        border-radius: 8px;
+        min-width: 180px;
+      }
+
+      /* Header controls transition classes used by JS */
+      .v-visible { transition: opacity .18s ease, transform .18s ease; opacity: 1; transform: translateY(0); }
+      .v-hidden { transition: opacity .18s ease, transform .18s ease; opacity: 0; transform: translateY(-6px); }
+
+      /* make label-inline elements visually cohesive */
+      .label-inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 4px 8px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.03);
+      }
+      .label-inline label { color: #fff; margin-bottom: 0; font-weight: 500; }
+
+      /* Cards and container (subtle depth) */
+      .card {
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(3,10,34,0.06);
+        border: none;
+      }
+
+      /* Back to top (bigger, friendlier) */
+      #back-to-top {
+        position: fixed;
+        right: 18px;
+        bottom: 24px;
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        background: linear-gradient(180deg,#0d6efd,#0b5ed7);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(13,110,253,0.22);
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform .12s ease;
+      }
+      #back-to-top.show { opacity: 1; pointer-events: auto; transform: translateY(-4px); }
+
+      /* improve code-section */
+      .code-section {
+        border-radius: 8px;
+        background: #0b0b0b;
+        padding: 12px;
+      }
+
+      /* Responsive improvements for mobile lists and tables */
+      @media (max-width: 768px) {
+        .brand-title { font-size: 0.95rem; }
+        #header-search { max-width: 180px; }
+        .version-and-quick .form-select { min-width: 120px; font-size: 14px; }
+        .flow-forms, form { width: 100%; }
+        /* stacked table cards */
+        table.responsive { display:block; width:100%; overflow:auto; }
+      }
+
+      /* subtle animation for copy button */
+      .copy-code-button { transition: transform .12s ease, opacity .12s ease; }
+      .copy-code-button:active { transform: scale(.98); }
+
+      /* nicer branch table rows */
+      #branchesTableBody tr { transition: background .12s ease; }
+      #branchesTableBody tr:hover { background: rgba(13,110,253,0.04); }
+
+      /* Header & topbar */
+      header.bg-dark {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
         box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       }
       .topbar-inner {
@@ -401,26 +511,26 @@
   <body>
     <header class="bg-dark text-white py-2">
       <div class="d-flex justify-content-between align-items-center px-3 topbar-inner">
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center" style="min-width:0;">
           <img onclick="toggleHomePage()" height="28" width="28" src="./icons/home.png" alt="home" style="cursor:pointer"/>
-          <h1 class="text-center brand-title flex-grow-1">ONDC Financial Services Developer Guide</h1>
+          <h1 class="text-center brand-title flex-grow-1" title="ONDC Financial Services Developer Guide">ONDC Financial Services Developer Guide</h1>
         </div>
 
-        <input id="header-search" class="form-control" type="search" placeholder="Search branches, usecases, features..." aria-label="Search" oninput="headerSearch(this.value)"/>
+        <input id="header-search" class="form-control" type="search" placeholder="Search branches, usecases, features..." aria-label="Search branches" oninput="headerSearch(this.value)"/>
 
         <div class="version-and-quick d-flex align-items-center gap-2">
-          <div id="version-dropdown" class="d-flex align-items-center">
-  <label for="api-contracts" class="text-white mb-0 me-2">Branch:</label>
-  <select id="contract-dropdown" onchange="upadteContract()" class="form-select quick-nav w-auto">
-    <option value="" selected>Select Branch</option>
-    <option value="master">master</option>
-  </select>
-</div>
+          <!-- Hidden initially; header-ui will reveal depending on view -->
+          <div id="version-dropdown" class="d-flex align-items-center v-hidden" style="display:none" aria-hidden="true">
+            <label for="api-contracts" class="text-white mb-0 me-2">Branch:</label>
+            <select id="contract-dropdown" onchange="upadteContract()" class="form-select quick-nav w-auto" aria-label="Select branch">
+              <option value="" selected>Select Branch</option>
+            </select>
+          </div>
 
-          <!-- Quick nav (Module) — hidden on home, shown when branch opened -->
-          <div id="quick-nav-container">
+          <!-- Quick nav (Module) — hidden initially -->
+          <div id="quick-nav-container" class="v-hidden" style="display:none" aria-hidden="true">
             <label class="text-white mb-0 me-2">Module:</label>
-            <select id="quick-nav" class="form-select quick-nav" onchange="quickNavigate(this.value)">
+            <select id="quick-nav" class="form-select quick-nav" onchange="quickNavigate(this.value)" aria-label="Quick jump to module">
               <option value="">Quick Jump</option>
               <option value="#swagger">Swagger-UI</option>
               <option value="#flow">Flow-UI</option>

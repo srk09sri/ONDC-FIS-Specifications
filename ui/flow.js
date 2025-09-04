@@ -126,38 +126,22 @@ async function loadSteps(steps) {
   }
 }
 
-
-
-
-
-
-
-function updateFlow() {
-  var flowDropdown = document.getElementById("flow-dropdown");
-  var selectedValue = flowDropdown.value;
-
-  const url = new URL(window.location);
-  url.searchParams.set('flowId', selectedValue);
-  window.history.pushState({}, '', url);
-
-  loadFlow(selectedValue);
-}
-
 async function loadFlow(flowName) {
   const flowSummary = document.getElementById("flow-summary");
   const flowDescription = document.getElementById("flow-description");
 
-  const veriosnDropdown = document.getElementById("version-dropdown")
   const content = document.getElementById("content")
   const home = document.getElementById("home")
   const loader = document.getElementById("loader")
 
-  veriosnDropdown.style.display = "block"
+  // Use header helpers for consistent UI state (avoid direct DOM style toggles)
+  if (typeof setVersionVisibility === 'function') setVersionVisibility(true); // show branch dropdown
+  if (typeof showQuickNav === 'function') showQuickNav(true);
+  if (typeof showHeaderSearch === 'function') showHeaderSearch(false);
+
   content.style.display = "block"
   home.style.display = "none"
   loader.style.display = "none"
-
-
 
   flowSummary.innerHTML = "";
   flowDescription.innerHTML = "";
@@ -186,6 +170,17 @@ async function loadFlow(flowName) {
   }
   flowDescription.append(mermaidDiv);
   loadSteps(selectedFlow["steps"]);
+}
+
+function updateFlow() {
+  var flowDropdown = document.getElementById("flow-dropdown");
+  var selectedValue = flowDropdown.value;
+
+  const url = new URL(window.location);
+  url.searchParams.set('flowId', selectedValue);
+  window.history.pushState({}, '', url);
+
+  loadFlow(selectedValue);
 }
 
 function loadFlows(data) {
